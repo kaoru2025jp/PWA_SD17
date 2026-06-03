@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>SOS</title>
+  <style>
+    body {
+      font-family: "Meiryo", "Segoe UI", sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    button {
+      padding: 12px 28px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #2d7ef7;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+    button:hover { background: #1f64d0; }
+    #excelTable {
+      margin-top: 30px;
+      border-collapse: collapse;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: none;
+    }
+    #excelTable th, #excelTable td {
+      border: 1px solid #ccc;
+      padding: 10px 16px;
+      text-align: center;
+      background: white;
+    }
+    #excelTable th {
+      background: #e8f0fe;
+      font-weight: bold;
+    }
+    #vbaBox {
+      margin-top: 25px;
+      width: min(600px, 90vw);
+      background: #1e1e1e;
+      color: #dcdcdc;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: Consolas, monospace;
+      white-space: pre;
+      overflow-x: auto;
+      display: none;
+    }
+    #vbaBox h3 {
+      color: #9cdcfe;
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <button type="button" onclick="myFunc()">START</button>
+
+  <table id="excelTable">
+    <tr><th>項目</th><th>値</th><th>計算式</th></tr>
+    <tr><td>B</td><td id="outB"></td><td>入力値</td></tr>
+    <tr><td>S</td><td id="outS"></td><td>入力値</td></tr>
+    <tr><td>O1</td><td id="outO1"></td><td>入力値</td></tr>
+    <tr><td>O2</td><td id="outO2"></td><td>入力値</td></tr>
+    <tr><td>D</td><td id="outD"></td><td>B - O1 - O2</td></tr>
+    <tr><td>E</td><td id="outE"></td><td>S - D</td></tr>
+  </table>
+
+  <div id="vbaBox">
+    <h3>VBA 翻訳コード</h3>
+    <code id="vbaCode"></code>
+  </div>
+
+  <script>
+    function myFunc(){
+      var B=prompt("B")
+      var S=prompt("S")
+      var O1=prompt("O1")
+      var O2=prompt("O2")
+      var D=B-O1-O2;
+      var E=S-D;
+      alert(D)
+      alert(E)
+
+      // Excel風テーブルに結果表示
+      document.getElementById("outB").textContent = B;
+      document.getElementById("outS").textContent = S;
+      document.getElementById("outO1").textContent = O1;
+      document.getElementById("outO2").textContent = O2;
+      document.getElementById("outD").textContent = D;
+      document.getElementById("outE").textContent = E;
+      document.getElementById("excelTable").style.display = "table";
+
+      // VBAに翻訳
+      var vba = `Sub SOS_Calc()
+    Dim B As Double
+    Dim S As Double
+    Dim O1 As Double
+    Dim O2 As Double
+    Dim D As Double
+    Dim E As Double
+
+    B = Val(InputBox("B"))
+    S = Val(InputBox("S"))
+    O1 = Val(InputBox("O1"))
+    O2 = Val(InputBox("O2"))
+
+    D = B - O1 - O2
+    E = S - D
+
+    MsgBox D
+    MsgBox E
+
+    ' Excelに出力
+    With Worksheets("Sheet1")
+        .Range("A1").Value = "項目"
+        .Range("B1").Value = "値"
+        .Range("C1").Value = "計算式"
+        .Range("A2").Value = "B": .Range("B2").Value = B: .Range("C2").Value = "入力値"
+        .Range("A3").Value = "S": .Range("B3").Value = S: .Range("C3").Value = "入力値"
+        .Range("A4").Value = "O1": .Range("B4").Value = O1: .Range("C4").Value = "入力値"
+        .Range("A5").Value = "O2": .Range("B5").Value = O2: .Range("C5").Value = "入力値"
+        .Range("A6").Value = "D": .Range("B6").Value = D: .Range("C6").Value = "B - O1 - O2"
+        .Range("A7").Value = "E": .Range("B7").Value = E: .Range("C7").Value = "S - D"
+    End With
+End Sub`;
+      document.getElementById("vbaCode").textContent = vba;
+      document.getElementById("vbaBox").style.display = "block";
+    }
+  </script>
+</body>
+</html>
